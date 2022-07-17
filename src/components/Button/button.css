@@ -1,0 +1,6 @@
+.button {
+  font-size: 1.6rem;
+  background: transparent;
+  color: var(--color-white);
+  border: none;
+}
