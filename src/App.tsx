@@ -1,22 +1,13 @@
-import { useState, ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import usePasswordCheck from "./hooks/usePasswordCheck";
-import { Password } from "./models/Password";
-import "./App.css";
+import useInput from "./hooks/useInput";
+import Header from "./components/Header";
+import { FirstInput, SecondInput } from "./components/Input/Input";
+import Checklist from "./components/Checklist/Checklist";
+import "./styles/app.css";
 
-function App(): ReactElement {
-  const [password, setPassword] = useState<Password>({
-    firstPassword: "",
-    secondPassword: "",
-  });
-
-  const inputChange: (event: React.ChangeEvent<HTMLInputElement>) => void = (event) => {
-    const { value, name } = event.target;
-    setPassword({
-      ...password,
-      [name]: value,
-    });
-  };
-
+export default function App(): ReactElement {
+  const { password, inputChange } = useInput();
   const {
     checkPasswordValidation,
     validLength,
@@ -27,56 +18,45 @@ function App(): ReactElement {
     match,
     requiredLength,
     firstPasswordLength,
+    infoMessage,
+    isValidPassword,
+    handleShowFirstPassword,
+    handleShowSecondPassword,
+    showFirstPassword,
+    showSecondPassword,
   } = usePasswordCheck(password);
 
+  useEffect(() => {
+    checkPasswordValidation(password.firstPassword);
+  }, [checkPasswordValidation, password.firstPassword]);
+
   return (
-    <div className="App">
-      <h1 className="App-header">Password Checker</h1>
+    <div className="app">
+      <Header headline="Password Checker" />
       <div className="container">
-        <label htmlFor="firstPassword" className="sr-only">
-          First Password
-        </label>
-        <input
-          className="input--state__invalid"
-          onChange={inputChange}
-          name="firstPassword"
-          type="password"
-          placeholder="Enter password"
+        <FirstInput
+          isValidPassword={isValidPassword}
+          showPassword={showFirstPassword}
+          infoMessage={infoMessage}
+          inputChange={inputChange}
+          handleShowPassword={handleShowFirstPassword}
         />
-        <span className="info-text--state__invalid">
-          {checkPasswordValidation(password.firstPassword)}
-        </span>
-      </div>
-      <div className="container">
-        <label htmlFor="secondPassword" className="sr-only">
-          Second Password
-        </label>
-        <input
-          className={match ? "input--state__valid" : "input--state__invalid"}
-          onChange={inputChange}
-          name="secondPassword"
-          type="password"
-          placeholder="Enter password again"
+        <SecondInput
+          showPassword={showSecondPassword}
+          inputChange={inputChange}
+          handleShowPassword={handleShowSecondPassword}
+          match={match}
         />
-        {match ? (
-          <span className="info-text--state__valid">passwords match ✅</span>
-        ) : (
-          <span className="info-text--state__invalid">passwords don't match ❌</span>
-        )}
       </div>
-      <ul>
-        <li>Valid length: {validLength ? <span>✅</span> : <span>❌</span>}</li>
-        <li>Has a number: {hasNumber ? <span>✅</span> : <span>❌</span>}</li>
-        <li>One uppercase Character: {upperCase ? <span>✅</span> : <span>❌</span>}</li>
-        <li>One lowercase Character: {lowerCase ? <span>✅</span> : <span>❌</span>}</li>
-        <li>Has special characters: {specialChar ? <span>✅</span> : <span>❌</span>}</li>
-        <li>
-          Has required length:{" "}
-          {requiredLength <= firstPasswordLength ? <span>✅</span> : <span>❌</span>}
-        </li>
-      </ul>
+      <Checklist
+        validLength={validLength}
+        hasNumber={hasNumber}
+        upperCase={upperCase}
+        lowerCase={lowerCase}
+        specialChar={specialChar}
+        requiredLength={requiredLength}
+        firstPasswordLength={firstPasswordLength}
+      />
     </div>
   );
 }
-
-export default App;
