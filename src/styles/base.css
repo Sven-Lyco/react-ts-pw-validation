@@ -6,8 +6,10 @@
 
 :root {
   --color-white: #fefefe;
-  --color-black: #333;
   --color-gray: #aaacad;
+  --color-black: #282c34;
+  --color-red: #fc3c6c;
+  --color-green: #00cc66;
 }
 
 body {
@@ -17,8 +19,8 @@ body {
     "Helvetica Neue", sans-serif;
   font-size: 1.125rem;
   line-height: 1.5;
-  background: var(----color-white);
-  color: var(----color-black);
+  background: var(--color-black);
+  color: var(--color-white);
 }
 
 input,
